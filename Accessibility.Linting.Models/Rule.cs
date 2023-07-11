@@ -20,9 +20,9 @@ namespace AccessibilityLinting.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// Regular Expression for 
+        /// Rule for the Linter to use to check if the syntax is valid
         /// </summary>
-        public string MatchPattern { get; set; }
+        public LinterRule LinterRule { get; set; }
 
         public List<string> Tags { get; set; } = null;
 
