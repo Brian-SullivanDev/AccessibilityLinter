@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Accessibility.Linting.Models\AccessibilityLinting.Models.csproj" />
+    <ProjectReference Include="..\AccessibilityExtension\AccessibilityExtension.csproj" />
+    <ProjectReference Include="..\AccessibilityLinting.Abstract\AccessibilityLinting.Abstract.csproj" />
+    <ProjectReference Include="..\AccessibilityLinting\AccessibilityLinting.csproj" />
+  </ItemGroup>
+
+</Project>
