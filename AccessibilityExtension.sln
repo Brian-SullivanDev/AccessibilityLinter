@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessibilityExtension", "AccessibilityExtension\AccessibilityExtension.csproj", "{8F4C2988-8957-4194-B4EB-4388E7B2CA73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessibilityLinting", "AccessibilityLinting\AccessibilityLinting.csproj", "{E811D763-E637-4934-AD2E-985744D13975}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessibilityLinting", "AccessibilityLinting\AccessibilityLinting.csproj", "{E811D763-E637-4934-AD2E-985744D13975}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessibilityLinting.Abstract", "AccessibilityLinting.Abstract\AccessibilityLinting.Abstract.csproj", "{5C870150-7128-45F5-B2FB-2A6018B8D8BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessibilityLinting.Abstract", "AccessibilityLinting.Abstract\AccessibilityLinting.Abstract.csproj", "{5C870150-7128-45F5-B2FB-2A6018B8D8BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Accessibility.Linting.Models", "Accessibility.Linting.Models\Accessibility.Linting.Models.csproj", "{0D42D97A-FCA6-4060-9BF8-A9ED2C48F747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessibilityLinting.Models", "Accessibility.Linting.Models\AccessibilityLinting.Models.csproj", "{0D42D97A-FCA6-4060-9BF8-A9ED2C48F747}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
