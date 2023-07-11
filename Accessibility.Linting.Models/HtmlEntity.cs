@@ -21,6 +21,9 @@ namespace AccessibilityLinting.Models
         TABLE,
         TABLE_ROW,
         TABLE_DATA,
+        BUTTON,
+        INPUT,
+        LABEL,
         CUSTOM
 
     }
