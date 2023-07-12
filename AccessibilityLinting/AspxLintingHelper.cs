@@ -1,6 +1,7 @@
 ﻿using AccessibilityLinting.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -11,7 +12,7 @@ namespace AccessibilityLinting
     {
 
         public const string _htmlTagMatchRegex = "(<([^>]+)>)";
-        public const string _htmlTagAttributeMatchRegex = @"([a-zA-Z.-]+)=[""']?((?:.(?![""']?\s+(?:\S+)=|\s*\/?[>""']))+.)[""']?";
+        public const string _htmlTagAttributeMatchRegex = @"([a-zA-Z.-]+)=[""']?((?:.(?![""']?\s+(?:\S+)=|\s*\/?[>""'])){0,}.)[""']?";
         public const string _htmlIdAttributeName = "id";
         public const char _htmlAttributeNameValueDelimiter = '=';
 
@@ -67,7 +68,9 @@ namespace AccessibilityLinting
             foreach (Match tag in allTags)
             {
 
-                var resolvedTag = GetTag(tag.Value);
+                var lineNumber = GetLineNumber(content, tag.Index);
+
+                var resolvedTag = GetTag(tag.Value, tag.Index, lineNumber);
 
                 if (resolvedTag != null)
                 {
@@ -80,7 +83,16 @@ namespace AccessibilityLinting
 
         }
 
-        public static HtmlTag GetTag(string tagContent)
+        public static int GetLineNumber(string content, int index)
+        {
+
+            var numberOfNewLineCharacters = content.Substring(0, index).Count(c => c == '\n');
+
+            return numberOfNewLineCharacters;
+
+        }
+
+        public static HtmlTag GetTag(string tagContent, int index, int lineNumber)
         {
 
             var attributes = new List<HtmlAttribute>();
@@ -102,7 +114,7 @@ namespace AccessibilityLinting
 
                 var html = attributeBlock.Value;
 
-                var attribute = GetAttribute(html);
+                var attribute = GetAttribute(html, attributeBlock.Index);
 
                 attributes.Add(attribute);
 
@@ -119,12 +131,15 @@ namespace AccessibilityLinting
             {
                 Attributes = attributes,
                 Entity = entity,
-                Identifier = identifier
+                Identifier = identifier,
+                IndexWithinFile = index,
+                LineNumberTagStartsOn = lineNumber,
+                OriginalHTML = tagContent
             };
 
         }
 
-        public static HtmlAttribute GetAttribute(string html)
+        public static HtmlAttribute GetAttribute(string html, int attributePositionIndex)
         {
 
             var attribute = new HtmlAttribute();
@@ -172,6 +187,7 @@ namespace AccessibilityLinting
 
             attribute.Name = attributeName;
             attribute.Value = attributeValue;
+            attribute.Index = attributePositionIndex;
 
             return attribute;
 

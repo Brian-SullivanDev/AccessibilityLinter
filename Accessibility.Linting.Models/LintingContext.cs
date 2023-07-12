@@ -18,6 +18,11 @@ namespace AccessibilityLinting.Models
         /// </summary>
         public string Content { get; set; }
 
+        /// <summary>
+        /// Waht type of file are we Linting?
+        /// </summary>
+        public FileType FileType { get; set; }
+
     }
 
 }

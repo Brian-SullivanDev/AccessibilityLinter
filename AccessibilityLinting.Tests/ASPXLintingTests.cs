@@ -38,10 +38,28 @@ namespace AccessibilityLinting.Tests
 
             var mockAttributeHtml = $@"{testDataAttributeName}={attributeValueDelimiter}{attributevalue}{attributeValueDelimiter}";
 
-            var derivedAttribute = GetAttribute(mockAttributeHtml);
+            var derivedAttribute = GetAttribute(mockAttributeHtml, 0);
 
             Assert.AreEqual(testDataAttributeName, derivedAttribute.Name);
             Assert.AreEqual(attributevalue, derivedAttribute.Value);
+
+        }
+
+        [Test]
+        [TestCase(0)]
+        [TestCase(7777777)]
+        [Parallelizable(ParallelScope.All)]
+        public void Test_GetAttribute_ProperlyHandlesIndexValue(int index)
+        {
+
+            var mockAttributeHtml = $@"{testDataAttributeName}='{testDataAttributeValue}'";
+
+            var derivedAttribute = GetAttribute(mockAttributeHtml, index);
+
+            Assert.AreEqual(testDataAttributeName, derivedAttribute.Name);
+            Assert.AreEqual(testDataAttributeValue, derivedAttribute.Value);
+
+            Assert.AreEqual(index, derivedAttribute.Index);
 
         }
 
@@ -88,7 +106,12 @@ namespace AccessibilityLinting.Tests
         }
 
         [Test]
-        public void Test_GetTag_ReturnsDerivedHtmlTagObjectWithPropertiesAsExpected()
+        [TestCase(0, 0)]
+        [TestCase(0, 777777)]
+        [TestCase(7777777, 777777)]
+        [TestCase(7777777, 0)]
+        [Parallelizable(ParallelScope.All)]
+        public void Test_GetTag_ReturnsDerivedHtmlTagObjectWithPropertiesAsExpected(int index, int lineNumber)
         {
 
             string mockHtml = $@"<div id='{testID}' class=""{testClass}"" {testDataAttributeName}='{testDataAttributeValue}'
@@ -125,19 +148,20 @@ namespace AccessibilityLinting.Tests
                 Entity = HtmlEntity.DIV
             };
 
-            var derivedHtmlTag = GetTag(mockHtml);
+            var derivedHtmlTag = GetTag(mockHtml, index, lineNumber);
 
             CollectionAssert.AreEquivalent(expectedHtmlTag.Attributes, derivedHtmlTag.Attributes);
             Assert.AreEqual(expectedHtmlTag.Entity, derivedHtmlTag.Entity);
             Assert.AreEqual(expectedHtmlTag.Identifier, derivedHtmlTag.Identifier);
+
+            Assert.AreEqual(index, derivedHtmlTag.IndexWithinFile);
+            Assert.AreEqual(lineNumber, derivedHtmlTag.LineNumberTagStartsOn);
 
         }
 
         [Test]
         public void Test_GetTags_ReturnsDerivedHtmlTagObjectCollectionWithPropertiesAsExpected()
         {
-
-
 
             var secondDivID = "testID2";
 
@@ -153,7 +177,8 @@ namespace AccessibilityLinting.Tests
             var testContext = new LintingContext()
             {
                 Content = mockHTML,
-                Identifier = "First Unit Test"
+                Identifier = "First Unit Test",
+                FileType = FileType.HTML
             };
 
             var derivedTags = GetTags(testContext.Content);
@@ -176,9 +201,7 @@ namespace AccessibilityLinting.Tests
 
         [Test]
         public void Test_GetTags_ReturnsDerivedHtmlTagObjectCollectionWithPropertiesAsExpectedWithFullHtml()
-        {
-
-            
+        {           
 
             var secondDivID = "testID2";
 
@@ -204,7 +227,8 @@ namespace AccessibilityLinting.Tests
             var testContext = new LintingContext()
             {
                 Content = mockHTML,
-                Identifier = "First Unit Test"
+                Identifier = "Second Unit Test",
+                FileType = FileType.HTML
             };
 
             var derivedTags = GetTags(testContext.Content);
@@ -216,39 +240,119 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(0, firstDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.HTML, firstDerivedTag.Entity);
             Assert.IsNull(firstDerivedTag.Identifier);
+            Assert.AreEqual(1, firstDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(firstDerivedTag.OriginalHTML), firstDerivedTag.IndexWithinFile);
+            Assert.AreEqual("<html>", firstDerivedTag.OriginalHTML);
 
             var secondDerivedTag = derivedTags[1];
 
             Assert.AreEqual(0, secondDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.HEAD, secondDerivedTag.Entity);
             Assert.IsNull(secondDerivedTag.Identifier);
+            Assert.AreEqual(2, secondDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(secondDerivedTag.OriginalHTML), secondDerivedTag.IndexWithinFile);
+            Assert.AreEqual("<head>", secondDerivedTag.OriginalHTML);
 
             var thirdDerivedTag = derivedTags[2];
 
             Assert.AreEqual(0, thirdDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.TITLE, thirdDerivedTag.Entity);
             Assert.IsNull(thirdDerivedTag.Identifier);
+            Assert.AreEqual(3, thirdDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(thirdDerivedTag.OriginalHTML), thirdDerivedTag.IndexWithinFile);
+            Assert.AreEqual("<title>", thirdDerivedTag.OriginalHTML);
 
             var fourthDerivedTag = derivedTags[3];
 
             Assert.AreEqual(0, fourthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.BODY, fourthDerivedTag.Entity);
             Assert.IsNull(fourthDerivedTag.Identifier);
+            Assert.AreEqual(6, fourthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(fourthDerivedTag.OriginalHTML), fourthDerivedTag.IndexWithinFile);
+            Assert.AreEqual("<body>", fourthDerivedTag.OriginalHTML);
 
             var fifthDerivedTag = derivedTags[4];
 
             Assert.AreEqual(4, fifthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.DIV, fifthDerivedTag.Entity);
             Assert.AreEqual(testID, fifthDerivedTag.Identifier);
+            Assert.AreEqual(8, fifthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(fifthDerivedTag.OriginalHTML), fifthDerivedTag.IndexWithinFile);
 
             var sixthDerivedTag = derivedTags[5];
 
             Assert.AreEqual(1, sixthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.SPAN, sixthDerivedTag.Entity);
             Assert.AreEqual(secondDivID, sixthDerivedTag.Identifier);
+            Assert.AreEqual(13, sixthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(mockHTML.IndexOf(sixthDerivedTag.OriginalHTML), sixthDerivedTag.IndexWithinFile);
 
         }
-    
+
+        [Test]
+        public void Test_GetTag_ReturnsExpectedValuesForEmptyAttributeValue_DoubleQuotes()
+        {
+
+            string mockHTML = @$"
+        <img id='{testID}' class=""{testClass}"" alt=""""/>
+";
+
+            var testContext = new LintingContext()
+            {
+                Content = mockHTML,
+                Identifier = "Empty Alt Attribute Unit Test",
+                FileType = FileType.HTML
+            };
+
+            var derivedTags = GetTags(testContext.Content);
+
+            Assert.AreEqual(1, derivedTags.Count);
+
+            var derviedTag = derivedTags[0];
+
+            Assert.AreEqual(3, derviedTag.Attributes.Count);
+            Assert.AreEqual(HtmlEntity.IMAGE, derviedTag.Entity);
+            Assert.AreEqual(testID, derviedTag.Identifier);
+
+            var derivedAltAttribute = derviedTag.Attributes[2];
+
+            Assert.AreEqual("alt", derivedAltAttribute.Name);
+            Assert.AreEqual(string.Empty, derivedAltAttribute.Value);
+
+        }
+
+        [Test]
+        public void Test_GetTag_ReturnsExpectedValuesForEmptyAttributeValue_SingleQuotes()
+        {
+
+            string mockHTML = @$"
+        <img id='{testID}' class=""{testClass}"" alt=''/>
+";
+
+            var testContext = new LintingContext()
+            {
+                Content = mockHTML,
+                Identifier = "Empty Alt Attribute Unit Test Single Quotes",
+                FileType = FileType.HTML
+            };
+
+            var derivedTags = GetTags(testContext.Content);
+
+            Assert.AreEqual(1, derivedTags.Count);
+
+            var derviedTag = derivedTags[0];
+
+            Assert.AreEqual(3, derviedTag.Attributes.Count);
+            Assert.AreEqual(HtmlEntity.IMAGE, derviedTag.Entity);
+            Assert.AreEqual(testID, derviedTag.Identifier);
+
+            var derivedAltAttribute = derviedTag.Attributes[2];
+
+            Assert.AreEqual("alt", derivedAltAttribute.Name);
+            Assert.AreEqual(string.Empty, derivedAltAttribute.Value);
+
+        }
+
     }
 
 }

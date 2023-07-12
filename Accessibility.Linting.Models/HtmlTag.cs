@@ -17,6 +17,12 @@ namespace AccessibilityLinting.Models
 
         public List<HtmlAttribute> Attributes { get; set; }
 
+        public string OriginalHTML { get; set; }
+
+        public int IndexWithinFile { get; set; }
+
+        public int LineNumberTagStartsOn { get; set; }
+
     }
 
 }

@@ -16,7 +16,7 @@ namespace AccessibilityLinting.Models
         /// <summary>
         /// On which Line does the error begin
         /// </summary>
-        public string LineNumber { get; set; }
+        public int LineNumber { get; set; }
 
         /// <summary>
         /// With which character does the error begin
