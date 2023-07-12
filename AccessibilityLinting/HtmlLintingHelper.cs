@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace AccessibilityLinting
 {
 
-    public static class AspxLintingHelper
+    public static class HtmlLintingHelper
     {
 
         public const string _htmlTagMatchRegex = "(<([^>]+)>)";
@@ -86,7 +86,7 @@ namespace AccessibilityLinting
         public static int GetLineNumber(string content, int index)
         {
 
-            var numberOfNewLineCharacters = content.Substring(0, index).Count(c => c == '\n');
+            var numberOfNewLineCharacters = content.Substring(0, index).Count(c => c == '\n') + 1;
 
             return numberOfNewLineCharacters;
 

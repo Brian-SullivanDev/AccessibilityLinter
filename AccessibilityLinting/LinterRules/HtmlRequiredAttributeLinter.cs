@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static AccessibilityLinting.AspxLintingHelper;
+using static AccessibilityLinting.HtmlLintingHelper;
 
 namespace AccessibilityLinting.LinterRules
 {
@@ -133,6 +133,8 @@ namespace AccessibilityLinting.LinterRules
             foreach (var derivedTag in derivedTags)
             {
 
+                var foundAttribute = false;
+
                 if (derivedTag.Entity == requiredAttributeEntityType)
                 {
 
@@ -142,15 +144,28 @@ namespace AccessibilityLinting.LinterRules
                         if (attribute.Name.ToLower() == requiredAttributeName)
                         {
 
+                            foundAttribute = true;
+
                             if (attributeCannotBeEmpty && attribute.Value.Equals(string.Empty))
                             {
 
+                                var lineNumber = derivedTag.LineNumberTagStartsOn;
+                                var startingCharacter = (short)(attribute.Index);
+                                var characterLength = (short)(attribute.Name.Length + 3);
 
-
-                                errors.Add(InlineLintingError(0, 0, 0));
+                                errors.Add(InlineLintingError(lineNumber, startingCharacter, characterLength));
                             }
 
                         }
+
+                        break;
+
+                    }
+
+                    if (!foundAttribute)
+                    {
+
+                        errors.Add(InlineLintingError(derivedTag.LineNumberTagStartsOn, 0, (short)(derivedTag.OriginalHTML.Length)));
 
                     }
 

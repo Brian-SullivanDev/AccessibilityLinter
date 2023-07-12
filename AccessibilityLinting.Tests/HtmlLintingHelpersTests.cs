@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using AccessibilityLinting;
-using static AccessibilityLinting.AspxLintingHelper;
+using static AccessibilityLinting.HtmlLintingHelper;
 using AccessibilityLinting.Models;
 using System.Collections.Generic;
 
 namespace AccessibilityLinting.Tests
 {
 
-    public class Tests
+    public class HelperTests
     {
 
         const string testID = "testID1";
@@ -102,6 +102,28 @@ namespace AccessibilityLinting.Tests
             var derivedEntity = GetHtmlEntity(testHtml);
 
             Assert.AreEqual(expectedEntity, derivedEntity);
+
+        }
+
+        [Test]
+        [TestCase(@"test", 1)]
+        [TestCase("\r\ntest", 2)]
+        [TestCase("\r\n\r\ntest", 3)]
+        [TestCase(@"
+test", 2)]
+        [TestCase("\r\n" + @"
+test", 3)]
+        [TestCase("\r\n\r\n" + @"
+
+
+test", 6)]
+        [Parallelizable(ParallelScope.All)]
+        public void Test_GetLineNumber_ReturnsCorrectLineNumbers(string content, int expectedLineNumber)
+        {
+
+            var resolvedLineNumber = GetLineNumber(content, content.Length - 1);
+
+            Assert.AreEqual(expectedLineNumber, resolvedLineNumber);
 
         }
 
@@ -240,7 +262,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(0, firstDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.HTML, firstDerivedTag.Entity);
             Assert.IsNull(firstDerivedTag.Identifier);
-            Assert.AreEqual(1, firstDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(2, firstDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(firstDerivedTag.OriginalHTML), firstDerivedTag.IndexWithinFile);
             Assert.AreEqual("<html>", firstDerivedTag.OriginalHTML);
 
@@ -249,7 +271,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(0, secondDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.HEAD, secondDerivedTag.Entity);
             Assert.IsNull(secondDerivedTag.Identifier);
-            Assert.AreEqual(2, secondDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(3, secondDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(secondDerivedTag.OriginalHTML), secondDerivedTag.IndexWithinFile);
             Assert.AreEqual("<head>", secondDerivedTag.OriginalHTML);
 
@@ -258,7 +280,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(0, thirdDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.TITLE, thirdDerivedTag.Entity);
             Assert.IsNull(thirdDerivedTag.Identifier);
-            Assert.AreEqual(3, thirdDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(4, thirdDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(thirdDerivedTag.OriginalHTML), thirdDerivedTag.IndexWithinFile);
             Assert.AreEqual("<title>", thirdDerivedTag.OriginalHTML);
 
@@ -267,7 +289,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(0, fourthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.BODY, fourthDerivedTag.Entity);
             Assert.IsNull(fourthDerivedTag.Identifier);
-            Assert.AreEqual(6, fourthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(7, fourthDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(fourthDerivedTag.OriginalHTML), fourthDerivedTag.IndexWithinFile);
             Assert.AreEqual("<body>", fourthDerivedTag.OriginalHTML);
 
@@ -276,7 +298,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(4, fifthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.DIV, fifthDerivedTag.Entity);
             Assert.AreEqual(testID, fifthDerivedTag.Identifier);
-            Assert.AreEqual(8, fifthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(9, fifthDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(fifthDerivedTag.OriginalHTML), fifthDerivedTag.IndexWithinFile);
 
             var sixthDerivedTag = derivedTags[5];
@@ -284,7 +306,7 @@ namespace AccessibilityLinting.Tests
             Assert.AreEqual(1, sixthDerivedTag.Attributes.Count);
             Assert.AreEqual(HtmlEntity.SPAN, sixthDerivedTag.Entity);
             Assert.AreEqual(secondDivID, sixthDerivedTag.Identifier);
-            Assert.AreEqual(13, sixthDerivedTag.LineNumberTagStartsOn);
+            Assert.AreEqual(14, sixthDerivedTag.LineNumberTagStartsOn);
             Assert.AreEqual(mockHTML.IndexOf(sixthDerivedTag.OriginalHTML), sixthDerivedTag.IndexWithinFile);
 
         }

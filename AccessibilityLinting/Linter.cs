@@ -1,8 +1,9 @@
 ﻿using AccessibilityLinting.Abstract;
+using AccessibilityLinting.LinterRules;
 using AccessibilityLinting.Models;
 using System;
 using System.Collections.Generic;
-using static AccessibilityLinting.AspxLinter;
+using static AccessibilityLinting.LinterRuleParser;
 
 namespace AccessibilityLinting
 {
@@ -52,21 +53,19 @@ namespace AccessibilityLinting
 
             var errors = new List<LintingError>();
 
+            foreach (var rule in _rules)
+            {
+
+                var linter = GetLinterRule(rule);
+
+                if (linter.RuleAppliesToContext(context))
+                {
+                    errors.AddRange(linter.RunAgainstContext(context));
+                }
+
+            }
+
             return errors;
-
-        }
-
-        public List<LintingError> ParseAspxFile(string content)
-        {
-
-            return ParseAspx(content);
-
-        }
-
-        public List<LintingError> ParseCssFile(string content)
-        {
-
-            return null;
 
         }
 
