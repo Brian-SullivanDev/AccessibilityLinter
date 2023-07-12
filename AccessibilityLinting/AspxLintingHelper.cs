@@ -11,12 +11,16 @@ namespace AccessibilityLinting
     {
 
         public const string _htmlTagMatchRegex = "(<([^>]+)>)";
-        public const string _htmlTagAttributeMatchRegex = @"(\w+)=[""']?((?:.(?![""']?\s+(?:\S+)=|\s*\/?[>""']))+.)[""']?";
+        public const string _htmlTagAttributeMatchRegex = @"([a-zA-Z.-]+)=[""']?((?:.(?![""']?\s+(?:\S+)=|\s*\/?[>""']))+.)[""']?";
         public const string _htmlIdAttributeName = "id";
         public const char _htmlAttributeNameValueDelimiter = '=';
 
         public const char _htmlEntityLeadingCharacter = '<';
         public const char _spaceCharacter = ' ';
+        public const char _htmlTagCloseCharacter = '>';
+        public const char _htmlTagTerminatorShorthandCharacter = '/';
+
+        public readonly static List<char> _htmlTagEntitySearchTerminators = new List<char>() { _spaceCharacter, _htmlTagCloseCharacter, _htmlTagTerminatorShorthandCharacter };
 
         public const string _htmlEntityNotFoundExceptionMessage = "HTML entity provided does is not properly formed to have a defined HTML entity.";
 
@@ -43,7 +47,12 @@ namespace AccessibilityLinting
             { "td", HtmlEntity.TABLE_DATA },
             { "button", HtmlEntity.BUTTON },
             { "input", HtmlEntity.INPUT },
-            { "label", HtmlEntity.LABEL }
+            { "label", HtmlEntity.LABEL },
+
+            { "html", HtmlEntity.HTML },
+            { "head", HtmlEntity.HEAD },
+            { "title", HtmlEntity.TITLE },
+            { "body", HtmlEntity.BODY },
         };
 
         public static List<HtmlTag> GetTags(string content)
@@ -199,7 +208,7 @@ namespace AccessibilityLinting
                 if (nextChar != _htmlEntityLeadingCharacter)
                 {
 
-                    if (nextChar == _spaceCharacter)
+                    if (_htmlTagEntitySearchTerminators.Contains(nextChar))
                     {
                         return entityBuilder.ToString();
                     }

@@ -17,6 +17,12 @@ namespace AccessibilityLinting.Models
             return $@"{Name}=`{Value}`";
         }
 
+        public override bool Equals(object obj)
+        {
+            var other = obj as HtmlAttribute;
+            return Name.Equals(other.Name) && Value.Equals(other.Value);
+        }
+
     }
 
 }

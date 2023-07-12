@@ -8,6 +8,10 @@ namespace AccessibilityLinting.Models
     public enum HtmlEntity
     {
 
+        HTML,
+        HEAD,
+        TITLE,
+        BODY,
         DIV,
         SPAN,
         IMAGE,
